@@ -90,6 +90,8 @@ function MessagesOf(key) {
 
 export default function () {
   return function (req, res, next) {
+    !req.p ? (req.p = {}) : null;
+
     res.data = (data, status = 200, message) => {
       const respo = {
         message,

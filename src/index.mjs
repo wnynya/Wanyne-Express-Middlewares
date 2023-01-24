@@ -3,6 +3,7 @@ import cookies from './cookies.mjs';
 import client from './client.mjs';
 import logger from './logger.mjs';
 import JSONResponses from './json-responses.mjs';
+import check from './check.mjs';
 
 export default {
   headers: headers,
@@ -10,4 +11,5 @@ export default {
   client: client,
   logger: logger,
   JSONResponses: JSONResponses,
+  check: check,
 };

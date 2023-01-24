@@ -9,6 +9,7 @@ export default function (options = {}) {
   }
 
   return async function (req, res, next) {
+    !req.p ? (req.p = {}) : null;
     req.cookies = req?.headers?.cookie ? parse(req?.headers?.cookie) : {};
     next();
   };

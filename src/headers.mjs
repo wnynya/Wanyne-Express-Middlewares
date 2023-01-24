@@ -1,5 +1,6 @@
 export default function responseHeaders(headers) {
   return function (req, res, next) {
+    !req.p ? (req.p = {}) : null;
     for (const key in headers) {
       const value = headers[key];
 

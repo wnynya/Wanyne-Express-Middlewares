@@ -1,19 +1,21 @@
-export default function (options) {
-  const logger = options.logger;
+export default function (logger) {
+  const options = logger;
   const blockChina = options.blockChina ? options.blockChina : false;
   return function (req, res, next) {
+    !req.p ? (req.p = {}) : null;
+
     // OPTIONS request
     if (req.method == 'OPTIONS') {
       next();
       return;
     }
 
-    if (options['ignore-hosts'].includes(req.client.ip)) {
+    if (options['ignore-hosts']?.includes(req.client.ip)) {
       next();
       return;
     }
 
-    if (options['ignore-agents'].includes(req.client.agent.string)) {
+    if (options['ignore-agents']?.includes(req.client.agent.string)) {
       next();
       return;
     }
