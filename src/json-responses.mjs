@@ -91,7 +91,10 @@ function MessagesOf(key) {
 export default function () {
   return function (req, res, next) {
     res.data = (data, status = 200, message) => {
-      const respo = {};
+      const respo = {
+        message,
+        data,
+      };
       data != undefined ? (respo.data = data) : null;
       respo.message = MessagesOf(message ? message : 'default' + status);
       res.status(status).send(respo);
