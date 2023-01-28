@@ -20,28 +20,26 @@ export default function (options = {}, headerOptions = {}) {
     // referer
     let origin = req.headers.origin;
     let referer = req.headers['referer'];
-    let internal = false;
+    let internalCORS = false;
+    const allow = res.getHeaders()?.['access-control-allow-origin'];
     if (!referer) {
       referer = 'Direct';
-    } else if (headerOptions?.['Access-Control-Allow-Origin']) {
-      for (const allow of headerOptions['Access-Control-Allow-Origin']) {
-        if (allow == origin && referer.startsWith(allow)) {
-          internal = true;
-          break;
-        }
-      }
+    } else if (allow == origin && referer.startsWith(allow)) {
+      internalCORS = true;
     }
+
+    console.log(internal);
 
     req.client.origin = origin;
     req.client.referer = referer;
-    req.client.internal = false;
+    req.client.internalCORS = false;
 
     // is internal request
     if (
       req.client.agent.system != 'Unknown' &&
       req.client.agent.browser != 'Unknown'
     ) {
-      req.client.internal = internal;
+      req.client.internalCORS = internalCORS;
     }
 
     // languages

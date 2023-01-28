@@ -1,6 +1,6 @@
 function internal(perm) {
   return (req, res, next) => {
-    if (!req.client.internal) {
+    if (!req.client.internalCORS) {
       if (perm) {
         if (!req.hasPermission(perm)) {
           res.error('permission403');
