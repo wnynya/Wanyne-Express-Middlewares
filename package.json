@@ -1,7 +1,6 @@
 {
   "name": "@wnynya/express-middlewares",
-  "version": "1.2.5",
-  "description": "@wnynya/express-middlewares",
+  "version": "1.2.6",
   "author": "Wany <sung@wany.io> (https://wany.io)",
   "main": "src/index.mjs",
   "dependencies": {}

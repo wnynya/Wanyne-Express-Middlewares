@@ -1,4 +1,4 @@
-export default function (options = {}) {
+export default function (options = {}, headerOptions = {}) {
   return function (req, res, next) {
     !req.p ? (req.p = {}) : null;
 
@@ -18,15 +18,30 @@ export default function (options = {}) {
     req.client.agent = parsedUserAgent;
 
     // referer
-    const parsedReferer = parseReferer(req, options?.referer?.internal);
-    req.client.referer = parsedReferer.url;
+    let origin = req.headers.origin;
+    let referer = req.headers['referer'];
+    let internal = false;
+    if (!referer) {
+      referer = 'Direct';
+    } else if (headerOptions?.['Access-Control-Allow-Origin']) {
+      for (const allow of headerOptions['Access-Control-Allow-Origin']) {
+        if (allow == origin && referer.startsWith(allow)) {
+          internal = true;
+          break;
+        }
+      }
+    }
+
+    req.client.origin = origin;
+    req.client.referer = referer;
+    req.client.internal = false;
 
     // is internal request
     if (
       req.client.agent.system != 'Unknown' &&
       req.client.agent.browser != 'Unknown'
     ) {
-      req.client.internal = parsedReferer.internal;
+      req.client.internal = internal;
     }
 
     // languages
@@ -123,20 +138,5 @@ function parseAgent(req) {
     browser: browser,
     system: system,
     string: agent,
-  };
-}
-
-function parseReferer(req, regex) {
-  let referer = req.headers['referer'];
-  let internal = false;
-  if (!referer) {
-    referer = 'Direct';
-  } else if (regex && referer.match(regex)) {
-    internal = true;
-  }
-
-  return {
-    url: referer,
-    internal: internal,
   };
 }
