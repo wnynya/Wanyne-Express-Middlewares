@@ -28,8 +28,6 @@ export default function (options = {}, headerOptions = {}) {
       internalCORS = true;
     }
 
-    console.log(internal);
-
     req.client.origin = origin;
     req.client.referer = referer;
     req.client.internalCORS = false;
