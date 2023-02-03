@@ -43,8 +43,10 @@ export default function (options = {}, headerOptions = {}) {
     }
 
     // languages
-    const lang = req.acceptsLanguages()[0];
-    req.client.lang = lang;
+    if (req.acceptsLanguages) {
+      const lang = req.acceptsLanguages()[0];
+      req.client.lang = lang;
+    }
 
     next();
   };
