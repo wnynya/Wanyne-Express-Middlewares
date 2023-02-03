@@ -21,7 +21,9 @@ export default function (options = {}, headerOptions = {}) {
     let origin = req.headers.origin;
     let referer = req.headers['referer'];
     let internalCORS = false;
-    const allow = res?.getHeaders()?.['access-control-allow-origin'];
+    const allow = res?.getHeaders
+      ? res.getHeaders()?.['access-control-allow-origin']
+      : null;
     if (!referer) {
       referer = 'Direct';
     } else if (allow && allow == origin && referer.startsWith(allow)) {
