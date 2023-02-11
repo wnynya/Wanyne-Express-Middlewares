@@ -3,7 +3,9 @@ export default function (options = {}) {
     const o = {};
     for (const c of s.split(';')) {
       const v = c.split('=');
-      o[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+      o[decodeURIComponent((v[0] ? v[0] : '').trim())] = decodeURIComponent(
+        (v[1] ? v[1] : '').trim()
+      );
     }
     return o;
   }
