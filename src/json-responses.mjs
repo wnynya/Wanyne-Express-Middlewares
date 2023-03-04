@@ -82,7 +82,11 @@ function MessagesOf(key) {
   if (HTTPResponses.hasOwnProperty(key)) {
     return HTTPResponses[key];
   } else if (typeof key == 'number') {
-    return msgOf('default' + key);
+    if (HTTPResponses.hasOwnProperty('default' + key)) {
+      return HTTPResponses['default' + key];
+    } else {
+      return 'default' + key;
+    }
   } else {
     return key + '';
   }
