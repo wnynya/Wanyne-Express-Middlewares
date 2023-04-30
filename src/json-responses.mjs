@@ -121,6 +121,7 @@ export default function () {
 
     res.error = (error, status) => {
       let msg = error === null ? 'default404' : error;
+      msg = error === undefined ? 'default404' : error;
       if (msg.message) {
         msg = msg.message;
       }
