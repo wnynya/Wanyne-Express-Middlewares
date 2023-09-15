@@ -7,6 +7,8 @@ export default function (options = {}, headerOptions = {}) {
     // IP
     let ip = req.headers['cf-connecting-ip']
       ? req.headers['cf-connecting-ip']
+      : req.headers['wn-connection-ip']
+      ? req.headers['wn-connection-ip']
       : req.headers['x-forwarded-for']
       ? req.headers['x-forwarded-for'].split(',')[0]
       : req.socket.remoteAddress;
