@@ -1,3 +1,5 @@
+'use strict';
+
 export default function (logger) {
   const options = logger;
   const blockChina = options.blockChina ? options.blockChina : false;

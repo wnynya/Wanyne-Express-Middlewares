@@ -1,3 +1,5 @@
+'use strict';
+
 function parseHTTPStatus(string, def = 200) {
   string = string + '';
   const m = string.match(/[1-5][0-9][0-9]/);

@@ -1,3 +1,5 @@
+'use strict';
+
 export default function (options = {}, headerOptions = {}) {
   return function (req, res, next) {
     !req.p ? (req.p = {}) : null;
@@ -14,6 +16,8 @@ export default function (options = {}, headerOptions = {}) {
       : req.socket.remoteAddress;
     ip = ip.substr(0, 7) == '::ffff:' ? ip.substr(7) : ip;
     req.client.ip = ip;
+
+    //req.client.geoip = geoip(ip);
 
     // user-agent
     const parsedUserAgent = parseAgent(req);
@@ -34,14 +38,14 @@ export default function (options = {}, headerOptions = {}) {
 
     req.client.origin = origin;
     req.client.referer = referer;
-    req.client.internalCORS = false;
+    //req.client.internalCORS = false;
 
     // is internal request
     if (
       req.client.agent.system != 'Unknown' &&
       req.client.agent.browser != 'Unknown'
     ) {
-      req.client.internalCORS = internalCORS;
+      //req.client.internalCORS = internalCORS;
     }
 
     // languages

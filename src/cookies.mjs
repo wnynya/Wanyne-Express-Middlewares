@@ -1,3 +1,5 @@
+'use strict';
+
 export default function (options = {}) {
   function parse(s) {
     const o = {};
@@ -11,7 +13,6 @@ export default function (options = {}) {
   }
 
   return async function (req, res, next) {
-    !req.p ? (req.p = {}) : null;
     req.cookies = req?.headers?.cookie ? parse(req?.headers?.cookie) : {};
     next();
   };

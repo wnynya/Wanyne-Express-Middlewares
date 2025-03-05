@@ -1,3 +1,5 @@
+'use strict';
+
 function internal(perm) {
   return (req, res, next) => {
     if (!req.client.internalCORS) {
