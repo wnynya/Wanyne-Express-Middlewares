@@ -1,64 +1,6 @@
 'use strict';
 
-export default function (options = {}, headerOptions = {}) {
-  return function (req, res, next) {
-    !req.p ? (req.p = {}) : null;
-
-    req.client = {};
-
-    // IP
-    let ip = req.headers['cf-connecting-ip']
-      ? req.headers['cf-connecting-ip']
-      : req.headers['wn-connection-ip']
-      ? req.headers['wn-connection-ip']
-      : req.headers['x-forwarded-for']
-      ? req.headers['x-forwarded-for'].split(',')[0]
-      : req.socket.remoteAddress;
-    ip = ip.substr(0, 7) == '::ffff:' ? ip.substr(7) : ip;
-    req.client.ip = ip;
-
-    //req.client.geoip = geoip(ip);
-
-    // user-agent
-    const parsedUserAgent = parseAgent(req);
-    req.client.agent = parsedUserAgent;
-
-    // referer
-    let origin = req.headers.origin;
-    let referer = req.headers['referer'];
-    let internalCORS = false;
-    const allow = res?.getHeaders
-      ? res.getHeaders()?.['access-control-allow-origin']
-      : null;
-    if (!referer) {
-      referer = 'Direct';
-    } else if (allow && allow == origin && referer.startsWith(allow)) {
-      internalCORS = true;
-    }
-
-    req.client.origin = origin;
-    req.client.referer = referer;
-    //req.client.internalCORS = false;
-
-    // is internal request
-    if (
-      req.client.agent.system != 'Unknown' &&
-      req.client.agent.browser != 'Unknown'
-    ) {
-      //req.client.internalCORS = internalCORS;
-    }
-
-    // languages
-    if (req.acceptsLanguages) {
-      const lang = req.acceptsLanguages()[0];
-      req.client.lang = lang;
-    }
-
-    next();
-  };
-}
-
-function parseAgent(req) {
+function parseUserAgent(req) {
   const agent = req.headers['user-agent'];
   let browser;
   let system;
@@ -146,3 +88,63 @@ function parseAgent(req) {
     string: agent,
   };
 }
+
+function getIP(req) {
+  let ip = req.headers['cf-connecting-ip']
+    ? req.headers['cf-connecting-ip']
+    : req.headers['wn-connection-ip']
+    ? req.headers['wn-connection-ip']
+    : req.headers['x-forwarded-for']
+    ? req.headers['x-forwarded-for'].split(',')[0]
+    : req.socket.remoteAddress;
+  ip = ip.substr(0, 7) == '::ffff:' ? ip.substr(7) : ip;
+  return ip;
+}
+
+export default (options = {}) => {
+  return (req, res, next) => {
+    req.client = {};
+
+    // IP
+    req.client.ip = getIP(req);
+    if (options.geoip) {
+      req.client.geoip = options.geoip(ip);
+    }
+
+    // user-agent
+    req.client.agent = parseUserAgent(req);
+
+    // referer
+    let origin = req.headers.origin;
+    let referer = req.headers['referer'];
+    let internalCORS = false;
+    const allow = res?.getHeaders
+      ? res.getHeaders()?.['access-control-allow-origin']
+      : null;
+    if (!referer) {
+      referer = 'Direct';
+    } else if (allow && allow == origin && referer.startsWith(allow)) {
+      internalCORS = true;
+    }
+
+    req.client.origin = origin;
+    req.client.referer = referer;
+    //req.client.internalCORS = false;
+
+    // is internal request
+    if (
+      req.client.agent.system != 'Unknown' &&
+      req.client.agent.browser != 'Unknown'
+    ) {
+      //req.client.internalCORS = internalCORS;
+    }
+
+    // languages
+    if (req.acceptsLanguages) {
+      const lang = req.acceptsLanguages()[0];
+      req.client.lang = lang;
+    }
+
+    next();
+  };
+};

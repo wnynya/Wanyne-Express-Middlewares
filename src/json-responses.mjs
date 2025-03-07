@@ -1,11 +1,5 @@
 'use strict';
 
-function parseHTTPStatus(string, def = 200) {
-  string = string + '';
-  const m = string.match(/[1-5][0-9][0-9]/);
-  return m ? m[0] * 1 : def;
-}
-
 const HTTPResponses = {
   default200: 'OK',
   pong200: 'pong!',
@@ -76,65 +70,30 @@ const HTTPResponses = {
   default506: 'Variant Also Negotiates',
   default510: 'Not Extended',
   default511: 'Network Authentication Required',
-
-  '': '',
 };
 
-function MessagesOf(key) {
-  if (HTTPResponses.hasOwnProperty(key)) {
-    return HTTPResponses[key];
-  } else if (typeof key == 'number') {
-    if (HTTPResponses.hasOwnProperty('default' + key)) {
-      return HTTPResponses['default' + key];
-    } else {
-      return 'default' + key;
+export default () => {
+  res.data = (data = null, status = 200, message = `default${status}`) => {
+    if (HTTPResponses[message]) {
+      status = Number(message.substring(message.length - 3));
     }
-  } else {
-    return key + '';
-  }
-}
-
-export default function () {
-  return function (req, res, next) {
-    !req.p ? (req.p = {}) : null;
-
-    res.data = (data, status = 200, message) => {
-      const respo = {
-        message,
-        data,
-      };
-      data != undefined ? (respo.data = data) : null;
-      respo.message = MessagesOf(message ? message : 'default' + status);
-      res.status(status).send(respo);
+    const body = {
+      message: HTTPResponses[message] || message,
+      data: data,
     };
-
-    res.ok = (message = 'default200') => {
-      res.data(undefined, 200, message);
-    };
-
-    res.null = () => {
-      res.data(undefined, 204);
-    };
-
-    res.message = (message, status) => {
-      res.data(undefined, status || parseHTTPStatus(message), message);
-    };
-    res.msg = res.message;
-
-    res.error = (error, status) => {
-      let msg = error === null ? 'default404' : error;
-      msg = error === undefined ? 'default404' : error;
-      if (msg.message) {
-        msg = msg.message;
-      }
-      let sta = status ? status : parseHTTPStatus(msg, 500);
-      if (sta >= 500) {
-        console.error(error);
-      }
-      res.data(undefined, sta, msg);
-    };
-    res.err = res.error;
-
-    next();
+    if (data === null) {
+      delete body.data;
+    }
+    res.status(status).json(body);
+    return status;
   };
-}
+
+  res.error = (error, status) => {
+    return res.data(null, status, error);
+  };
+
+  res.ok = (message) => {
+    return res.data(null, 200, message);
+  };
+  next();
+};

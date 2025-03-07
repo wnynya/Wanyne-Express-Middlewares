@@ -1,7 +1,7 @@
 'use strict';
 
-export default function responseHeaders(headers) {
-  return function (req, res, next) {
+export default (headers) => {
+  return (req, res, next) => {
     for (const key in headers) {
       const value = headers[key];
 
@@ -20,4 +20,4 @@ export default function responseHeaders(headers) {
     }
     next();
   };
-}
+};
