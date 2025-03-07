@@ -73,27 +73,29 @@ const HTTPResponses = {
 };
 
 export default () => {
-  res.data = (data = null, status = 200, message = `default${status}`) => {
-    if (HTTPResponses[message]) {
-      status = Number(message.substring(message.length - 3));
-    }
-    const body = {
-      message: HTTPResponses[message] || message,
-      data: data,
+  return (req, res, next) => {
+    res.data = (data = null, status = 200, message = `default${status}`) => {
+      if (HTTPResponses[message]) {
+        status = Number(message.substring(message.length - 3));
+      }
+      const body = {
+        message: HTTPResponses[message] || message,
+        data: data,
+      };
+      if (data === null) {
+        delete body.data;
+      }
+      res.status(status).json(body);
+      return status;
     };
-    if (data === null) {
-      delete body.data;
-    }
-    res.status(status).json(body);
-    return status;
-  };
 
-  res.error = (error, status) => {
-    return res.data(null, status, error);
-  };
+    res.error = (error, status) => {
+      return res.data(null, status, error);
+    };
 
-  res.ok = (message) => {
-    return res.data(null, 200, message);
+    res.ok = (message) => {
+      return res.data(null, 200, message);
+    };
+    next();
   };
-  next();
 };
