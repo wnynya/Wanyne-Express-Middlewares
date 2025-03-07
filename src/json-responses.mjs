@@ -90,7 +90,11 @@ export default () => {
     };
 
     res.error = (error, status) => {
-      return res.data(null, status, error);
+      let s = res.data(null, status, error);
+      if (s < 400) {
+        s = 500;
+      }
+      return s;
     };
 
     res.ok = (message) => {
