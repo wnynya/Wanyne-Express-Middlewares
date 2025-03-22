@@ -4,17 +4,15 @@ export default (headers) => {
   return (req, res, next) => {
     for (const key in headers) {
       const value = headers[key];
+      let origin = req.headers.origin;
 
-      // Array of Access-Control-Allow-Origin values
       if (key == 'Access-Control-Allow-Origin' && value instanceof Array) {
-        if (value.includes(req.headers.origin)) {
-          res.header('Access-Control-Allow-Origin', req.headers.origin);
-        } else {
-          res.header('Access-Control-Allow-Origin', null);
+        if (value.includes(origin)) {
+          res.header('Access-Control-Allow-Origin', origin);
         }
-      }
-      // Normal
-      else {
+      } else if (key == 'Access-Control-Allow-Origin' && value === '*') {
+        res.header('Access-Control-Allow-Origin', origin || '*');
+      } else {
         res.header(key, value);
       }
     }
